@@ -18,7 +18,7 @@ provider "aws" {
 
 resource "aws_instance" "ec2-test" {
     instance_type = "t2.micro"
-    #ubuntu 20.04 
+    #os ubuntu 20.04 
     ami = "ami-05f7491af5eef733a"
     tags = {
         Name = "ec2-test"
