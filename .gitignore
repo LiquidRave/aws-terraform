@@ -1,2 +1,3 @@
 terraform.tfstate
 terraform.tfstate.backup
+ansible/aws_ec2.yaml

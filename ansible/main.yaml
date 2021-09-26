@@ -1,0 +1,7 @@
+---
+- name: Test
+  gather_facts: false
+  hosts: aws_region_eu_central_1
+  tasks:
+    - name: run shell
+      command: echo "hello world"
