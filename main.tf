@@ -15,35 +15,47 @@ provider "aws" {
 }
 
 resource "aws_budgets_budget" "top_kek" {
-    name = "monthyl-budget"
+    name = "monthly-budget"
     budget_type = "COST"
     limit_amount = "10.0"
     limit_unit = "USD"
     time_unit = "MONTHLY"
     time_period_start = "2021-09-28_00:01"
 }
-resource "aws_internet_gateway" "main" {
+
+resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
 }
 
 resource "aws_vpc" "main" {
-    cidr_block = "10.0.0.0/16"
-    instance_tenancy = "default"
+    cidr_block = var.vpc_cidr
+    instance_tenancy = var.tenancy
+    enable_dns_hostnames = var.enable_dns_hostnames
+    enable_dns_support = var.enable_dns_support
     tags = {
         Name = "main"
     }
 }
 
-resource "aws_subnet" "main" {
+resource "aws_route" "public-route" {
+    route_table_id = aws_vpc.main.main_route_table_id
+    destination_cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+}
+
+resource "aws_subnet" "main_subnet" {
     vpc_id = aws_vpc.main.id
     cidr_block = "10.0.0.0/24"
+    tags = {
+        Name = "main_subnet"
+    }
 }
 
 resource "aws_route_table" "route_table1" {
     vpc_id = aws_vpc.main.id
     route {
         cidr_block = "0.0.0.0/0"
-        gateway_id = aws_internet_gateway.main.id
+        gateway_id = aws_internet_gateway.igw.id
     }
 }
 resource "aws_security_group" "allow_all" {
@@ -64,7 +76,7 @@ resource "aws_security_group" "allow_all" {
       cidr_blocks      = ["0.0.0.0/0"]
     }
   tags = {
-    Name = "allow_ssh"
+    Name = "allow_all"
   }
 }
 resource "aws_key_pair" "deployer" {
@@ -75,8 +87,9 @@ resource "aws_key_pair" "deployer" {
 resource "aws_instance" "haproxy_load_balancer" {
     instance_type = var.server_type
     ami = var.ami
-    subnet_id = aws_subnet.main.id
+    subnet_id = aws_subnet.main_subnet.id
     vpc_security_group_ids = [ aws_security_group.allow_all.id ]
+    associate_public_ip_address = true
     key_name = "aws"
     tags = {
         Name = "haproxy_loadbalancer"
@@ -86,18 +99,21 @@ resource "aws_instance" "haproxy_load_balancer" {
 resource "aws_instance" "webserver1" {
     instance_type = var.server_type 
     ami = var.ami
-    subnet_id = aws_subnet.main.id
+    subnet_id = aws_subnet.main_subnet.id
     vpc_security_group_ids = [ aws_security_group.allow_all.id ]
+    associate_public_ip_address = true
     key_name = "aws"
     tags = {
         Name = "webserver1"
     }
 }
+
 resource "aws_instance" "webserver2" {
     instance_type = var.server_type 
-    subnet_id = aws_subnet.main.id
+    subnet_id = aws_subnet.main_subnet.id
     ami = var.ami
     vpc_security_group_ids = [ aws_security_group.allow_all.id ]
+    associate_public_ip_address = true
     key_name = "aws"
     tags = {
         Name = "webserver2"
