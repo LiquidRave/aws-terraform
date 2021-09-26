@@ -18,6 +18,9 @@ InstallAWScli:
 	sudo ./aws/install
 	rm -rf ./aws
 
+installAnsible:
+	sudo pip3 install ansible boto3 botocore
+
 prepare: installTerraform
 	aws configure
 
@@ -28,5 +31,12 @@ apply:
 	terraform plan
 	terraform apply
 
+destroy:
+	terraform destroy
+
+ansibleDocker:
+	sudo pip3 install docker
+	ansible-galaxy collection install community.docker
+
 ansible-playbook:
-	ansible-playbook ./ansible/main.yaml 
+	ansible-playbook ./ansible/main.yaml

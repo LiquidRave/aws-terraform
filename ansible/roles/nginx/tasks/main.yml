@@ -1,0 +1,8 @@
+---
+- name: setup nginx container on each web server host
+  become_user: ubuntu
+  community.docker.docker_container:
+    name: nginx
+    image: nginx
+    ports:
+        - "80:80"

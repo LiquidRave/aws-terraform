@@ -1,0 +1,8 @@
+---
+- name: setup haproxy container on each web server host
+  become_user: ubuntu
+  community.docker.docker_container:
+    name: haproxy
+    image: haproxy
+    ports:
+        - "80:80"
