@@ -6,6 +6,7 @@
   roles:
     - docker
 
+
 - name: configure two nginx web server containers on web server hosts
   gather_facts: false
   become: yes

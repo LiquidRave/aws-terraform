@@ -41,7 +41,25 @@ variable "enable_dns_hostnames" {
 }
 
 variable "vpc_name" {
-  type        = string
-  default     = "main"
-  description = ""
+    type        = string
+    default     = "main"
+    description = ""
+}
+
+variable "bucket_name" {
+    type = string
+    default = "srdela-bucket"
+    description = ""
+}
+
+variable "domain_name" {
+    type = string
+    default = "srdela.xyz"
+    description = ""
+}
+
+variable "lb_group01" {
+    type = string
+    default = "target-group01"
+    description = "group for loadbalancer"
 }

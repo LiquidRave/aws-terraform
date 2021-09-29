@@ -20,7 +20,7 @@ resource "aws_budgets_budget" "top_kek" {
     limit_amount = "10.0"
     limit_unit = "USD"
     time_unit = "MONTHLY"
-    time_period_start = "2021-09-28_00:01"
+    time_period_start = "2021-10-10_00:01"
 }
 
 resource "aws_internet_gateway" "igw" {
@@ -33,7 +33,7 @@ resource "aws_vpc" "main" {
     enable_dns_hostnames = var.enable_dns_hostnames
     enable_dns_support = var.enable_dns_support
     tags = {
-        Name = "main"
+        Name = var.vpc_name
     }
 }
 
@@ -117,5 +117,14 @@ resource "aws_instance" "webserver2" {
     key_name = "aws"
     tags = {
         Name = "webserver2"
+    }
+}
+
+resource "aws_s3_bucket" "b" {
+    bucket = var.bucket_name
+    acl = "private"
+    tags = {
+        Name = var.bucket_name
+        Environment = "Prod"
     }
 }

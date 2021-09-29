@@ -6,3 +6,9 @@
     image: nginx
     ports:
         - "80:80"
+    mounts:
+      - type: bind
+      - source: /var/www/html/srdela.xyz
+      - target: /var/www/html/srdela.xyz
+      - read_only: yes
+    

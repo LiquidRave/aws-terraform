@@ -28,7 +28,14 @@
     update_cache: true 
 
 - name: allow ubuntu user to use docker engine
-  shell: "usermod -aG docker ubuntu"
+  user:
+    name: ubuntu
+    groups: docker
+    append: yes
+
+- name: reset ssh conn so ubuntu user can run docker group commands
+  ansible.builtin.meta:
+    reset_connection
 
 - name: start docker
   ansible.builtin.service:
