@@ -1,0 +1,29 @@
+---
+- name: install and configure docker so ansible can work with it
+  gather_facts: false
+  become: yes
+  hosts: aws_region_eu_central_1
+  roles:
+    - docker
+
+
+- name: configure two nginx web server containers on web server hosts
+  gather_facts: false
+  become: yes
+  hosts: tag_Name_webserver1,tag_Name_webserver2
+  roles: 
+    - nginx
+
+- name: configure haproxy loadbalancer
+  gather_facts: false
+  become: yes
+  hosts: tag_Name_haproxy_loadbalancer
+  roles:
+    - haproxy
+    
+    
+    
+
+
+
+

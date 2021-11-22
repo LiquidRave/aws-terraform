@@ -1,0 +1,44 @@
+---
+- name: create dir
+  file: 
+    path: /home/ubuntu/var/html/srdela.xyz
+    state: directory
+    mode: 0755
+
+- name: create conf dir
+  file:
+    path: /home/ubuntu/nginx.conf.d
+    state: directory
+    mode: 0755
+- name: cp the html webpage
+  ansible.builtin.copy:
+    src: /home/liquid/aws-terraform/ansible/files/webpage/
+    dest: /home/ubuntu/var/html/srdela.xyz
+    mode: 0644
+    owner: ubuntu
+    group: ubuntu
+
+- name: copy nginx web page conf
+  ansible.builtin.copy:
+    src: /home/liquid/aws-terraform/ansible/files/srdela.xyz.conf
+    dest: /home/ubuntu/nginx.conf.d
+    mode: 0644
+    owner: ubuntu
+    group: ubuntu
+- name: setup nginx container on each web server host
+  become_user: ubuntu
+  community.docker.docker_container:
+    name: nginx
+    image: nginx
+    ports:
+        - "80:80"
+    recreate: yes
+    mounts:
+      - type: bind
+        source: /home/ubuntu/var/html/srdela.xyz
+        target: /usr/share/nginx/html
+        read_only: yes
+      - source: /home/ubuntu/nginx.conf.d
+        target: /etc/nginx/conf.d
+        type: bind
+        read_only: yes
